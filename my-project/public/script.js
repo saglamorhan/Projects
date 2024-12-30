@@ -169,7 +169,7 @@ function handleEnter() {
         currentRow++;
         currentCol = 0;
 
-        if (currentRow >= 6) {
+        if (currentRow > 6) {
             // Eğer 6 tahmin yapıldıysa, oyun bitmiştir
             document.getElementById("result").textContent = `Maalesef! Doğru kelime: ${correctWord}`;
         }
@@ -211,7 +211,7 @@ function checkGuess(guess) {
 
     if (guess === correctWord ) {
         document.getElementById("result").textContent = "Tebrikler! Kazandınız!";
-    } else if (currentRow === 5) {
+    } else if (currentRow === 6) {
         document.getElementById("result").textContent = `Maalesef! Doğru kelime: ${correctWord}`;
     }
 
