@@ -77,3 +77,8 @@ body {
     color: white;  /* Metin rengini beyaz yap */
     font-weight: bold;  /* Metni kalın yap */
 }
+.cell.disabled {
+    /*background-color: #e0e0e0;  Gri ton */
+    /*color: #808080;            Daha açık yazı rengi */
+    pointer-events: none;     /* Tıklama ve etkileşim devre dışı */
+}

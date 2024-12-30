@@ -1,10 +1,13 @@
 let correctWord = ""; // Doğru kelime burada saklanacak
 let currentRow = 0;
 let currentCol = 0;
+let wordList = new Set();
+
 
 async function initializeGame() {
     try {
-        // Rastgele kelimeyi ata
+        // Rastgele kelimeyi ata ve kelime listesini yükle
+        await loadWordList();
         correctWord = await assignRandomWord();
         console.log("Doğru kelime:", correctWord);
 
@@ -13,6 +16,25 @@ async function initializeGame() {
         createKeyboard();
     } catch (error) {
         console.error("Oyun başlatılamadı:", error.message);
+    }
+}
+
+// Kelime listesini yükleyen fonksiyon
+async function loadWordList() {
+    try {
+        const response = await fetch("./bes_harfli_kelime_listesi.txt");
+        if (!response.ok) throw new Error("Kelime dosyası yüklenemedi.");
+
+        const text = await response.text();
+        const words = text
+            .split("\n")
+            .map(word => word.trim().toUpperCase())
+            .filter(word => word.length === 5);
+
+        // Kelimeleri Set'e ekleyelim
+        words.forEach(word => wordList.add(word));
+    } catch (error) {
+        console.error("Hata:", error.message);
     }
 }
 
@@ -94,7 +116,7 @@ function handleKeyInput(letter) {
 
 
 function handleBackspace() {
-    if (currentCol > 0) {  // Eğer currentCol sıfırdan büyükse
+    /* if (currentCol > 0) {  // Eğer currentCol sıfırdan büyükse
         currentCol--;  // Bir önceki hücreye git
         const cell = document.querySelector(`.cell[data-row='${currentRow}'][data-index='${currentCol}']`);
         if (cell) {
@@ -107,21 +129,43 @@ function handleBackspace() {
         if (cell) {
             cell.textContent = ""; // Hücreyi temizle
         }
-    }
+    } */
+        if (currentCol > 0) {  // Eğer currentCol sıfırdan büyükse
+            const cell = document.querySelector(`.cell[data-row='${currentRow}'][data-index='${currentCol - 1}']`);
+            if (cell && !cell.classList.contains("disabled")) {  // Eğer hücre düzenlemeye açık ise
+                cell.textContent = ""; // Hücreyi temizle
+                currentCol--;  // Bir önceki hücreye git
+            }
+        }
+}
+
+function disableRowEditing(row) {
+    const cells = document.querySelectorAll(`.cell[data-row='${row}']`);
+    cells.forEach(cell => cell.classList.add("disabled"));  // Hücreleri düzenlemeye kapat
 }
 
 
+
 function handleEnter() {
-    if (currentCol === 5) {  // Eğer 5 harf tamamlandıysa
+    if (currentCol === 5) { // Eğer 5 harf tamamlandıysa
         const guess = Array.from(
             document.querySelectorAll(`.cell[data-row='${currentRow}']`)
-        ).map(cell => cell.textContent.toUpperCase())  // Her hücrenin içeriğini al
-            .join("");  // Harfleri birleştir
+        )
+        .map(cell => cell.textContent.toUpperCase()) // Her hücrenin içeriğini al
+        .join(""); // Harfleri birleştir
 
-        // Tahmini kontrol et
+        // Tahminin sözlükte olup olmadığını kontrol et
+        if (!wordList.has(guess)) {
+            // Tahmin sözlükte yoksa kullanıcıya hata mesajı göster
+            document.getElementById("result").textContent = "Bu kelime sözlükte yok!";
+            return; // İşlemi sonlandır
+        }
+
+        // Tahmin sözlükte varsa doğru cevap kontrolünü yap
         checkGuess(guess);
 
         // Satır geçişini sağlayalım
+        disableRowEditing(currentRow);
         currentRow++;
         currentCol = 0;
 
@@ -131,7 +175,6 @@ function handleEnter() {
         }
     }
 }
-
 
 function checkGuess(guess) {
     console.log("Tahmin edilen kelime:", guess); // Doğru tahminin tamamını konsola yazdır
@@ -166,7 +209,7 @@ function checkGuess(guess) {
 
     updateKeyboardColors(guess, checkedPositions);
 
-    if (guess === correctWord) {
+    if (guess === correctWord ) {
         document.getElementById("result").textContent = "Tebrikler! Kazandınız!";
     } else if (currentRow === 5) {
         document.getElementById("result").textContent = `Maalesef! Doğru kelime: ${correctWord}`;
