@@ -163,12 +163,37 @@ function handleEnter() {
             }
             disableEnterKey();  // ENTER tuşunu pasif hale getir
             const resultText = guess === correctWord
-                ? "Tebrikler! Kazandınız!"
-                : `Maalesef! Doğru kelime: ${correctWord}`;
+                ? alert("Tebrikler! Kazandınız!")
+                : alert(`Maalesef! Doğru kelime: ${correctWord}`);
             document.getElementById("result").textContent = resultText;
+            showNewGameButton(); // Yeni Oyun tuşunu göster
         }
         currentCol = 0;
     }
+}
+
+// Yeni oyun tuşunu gösteren fonksiyon
+function showNewGameButton() {
+    const newGameButton = document.getElementById("new-game");
+    newGameButton.style.display = "block"; // Tuşu görünür yap
+    newGameButton.addEventListener("click", resetGame); // Tıklanabilirlik ekle
+}
+
+// Oyunu sıfırlayan fonksiyon
+function resetGame() {
+    // Tahtayı temizle
+    document.getElementById("game-board").innerHTML = "";
+    document.getElementById("keyboard").innerHTML = "";
+    document.getElementById("result").textContent = "";
+
+    // Yeni oyunu başlat
+    currentRow = 0;
+    currentCol = 0;
+    initializeGame();
+
+    // "Yeni Oyun" tuşunu tekrar gizle
+    const newGameButton = document.getElementById("new-game");
+    newGameButton.style.display = "none";
 }
 
 function disableEnterKey() {
