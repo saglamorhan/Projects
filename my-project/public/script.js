@@ -116,27 +116,14 @@ function handleKeyInput(letter) {
 
 
 function handleBackspace() {
-    /* if (currentCol > 0) {  // Eğer currentCol sıfırdan büyükse
-        currentCol--;  // Bir önceki hücreye git
-        const cell = document.querySelector(`.cell[data-row='${currentRow}'][data-index='${currentCol}']`);
-        if (cell) {
+    if (currentCol > 0) {  // Eğer currentCol sıfırdan büyükse
+        const cell = document.querySelector(`.cell[data-row='${currentRow}'][data-index='${currentCol - 1}']`);
+        if (cell && !cell.classList.contains("disabled")) {  // Eğer hücre düzenlemeye açık ise
             cell.textContent = ""; // Hücreyi temizle
+            currentCol--;  // Bir önceki hücreye git
         }
-    } else if (currentRow > 0) {  // Eğer currentCol sıfırsa ve row 0'dan büyükse
-        currentRow--;  // Bir önceki satıra geç
-        currentCol = 4;  // Son sütuna geri git
-        const cell = document.querySelector(`.cell[data-row='${currentRow}'][data-index='${currentCol}']`);
-        if (cell) {
-            cell.textContent = ""; // Hücreyi temizle
-        }
-    } */
-        if (currentCol > 0) {  // Eğer currentCol sıfırdan büyükse
-            const cell = document.querySelector(`.cell[data-row='${currentRow}'][data-index='${currentCol - 1}']`);
-            if (cell && !cell.classList.contains("disabled")) {  // Eğer hücre düzenlemeye açık ise
-                cell.textContent = ""; // Hücreyi temizle
-                currentCol--;  // Bir önceki hücreye git
-            }
-        }
+        document.getElementById("result").textContent = "";
+    }
 }
 
 function disableRowEditing(row) {
@@ -151,8 +138,8 @@ function handleEnter() {
         const guess = Array.from(
             document.querySelectorAll(`.cell[data-row='${currentRow}']`)
         )
-        .map(cell => cell.textContent.toUpperCase()) // Her hücrenin içeriğini al
-        .join(""); // Harfleri birleştir
+            .map(cell => cell.textContent.toUpperCase()) // Her hücrenin içeriğini al
+            .join(""); // Harfleri birleştir
 
         // Tahminin sözlükte olup olmadığını kontrol et
         if (!wordList.has(guess)) {
@@ -209,7 +196,7 @@ function checkGuess(guess) {
 
     updateKeyboardColors(guess, checkedPositions);
 
-    if (guess === correctWord ) {
+    if (guess === correctWord) {
         document.getElementById("result").textContent = "Tebrikler! Kazandınız!";
     } else if (currentRow === 6) {
         document.getElementById("result").textContent = `Maalesef! Doğru kelime: ${correctWord}`;
