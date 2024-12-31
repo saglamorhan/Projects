@@ -2,7 +2,7 @@ let correctWord = ""; // Doğru kelime burada saklanacak
 let currentRow = 0;
 let currentCol = 0;
 let wordList = new Set();
-
+const gameBoard = document.getElementById("game-board"); // game-board id'sine sahip div
 
 async function initializeGame() {
     try {
@@ -56,8 +56,7 @@ async function assignRandomWord() {
     }
 }
 
-const gameBoard = document.getElementById("game-board"); // game-board id'sine sahip div
-
+// Oyun tahtasını oluşturan fonksiyon
 const createBoard = () => {
     for (let row = 0; row < 6; row++) {  // 6 satır oluşturacağız (6 tahmin)
         const rowDiv = document.createElement("div");
@@ -77,7 +76,7 @@ const createBoard = () => {
     }
 };
 
-
+// Oyunda kullanilacak klavyeyi oluşturan fonksiyon
 function createKeyboard() {
     const keyboard = document.getElementById("keyboard");
     keyboard.className = "keyboard";
@@ -104,6 +103,7 @@ function createKeyboard() {
 
 }
 
+// Tahmini oyun tahtasındaki ilgili satıra yazan fonksiyon
 function handleKeyInput(letter) {
     if (currentCol < 5 && currentRow < 6) {  // 5 harfli kelimeyi oluşturana kadar
         const cell = document.querySelector(`.cell[data-row='${currentRow}'][data-index='${currentCol}']`);
@@ -114,7 +114,7 @@ function handleKeyInput(letter) {
     }
 }
 
-
+// Geri silme tuşuna basıldığında yapılacaklari ayarlayan fonksiyon
 function handleBackspace() {
     if (currentCol > 0) {  // Eğer currentCol sıfırdan büyükse
         const cell = document.querySelector(`.cell[data-row='${currentRow}'][data-index='${currentCol - 1}']`);
@@ -126,13 +126,13 @@ function handleBackspace() {
     }
 }
 
+// Hücreleri silme veya yazmaya karşı engelleyen fonksiyon
 function disableRowEditing(row) {
     const cells = document.querySelectorAll(`.cell[data-row='${row}']`);
     cells.forEach(cell => cell.classList.add("disabled"));  // Hücreleri düzenlemeye kapat
 }
 
-
-
+// Enter tuşuna basıldığında yapılacakları ayarlayan fonksiyon
 function handleEnter() {
     if (currentCol === 5) { // Eğer 5 harf tamamlandıysa
         const guess = Array.from(
@@ -154,21 +154,58 @@ function handleEnter() {
         // Satır geçişini sağlayalım
         disableRowEditing(currentRow);
         currentRow++;
-        currentCol = 0;
 
-        if (currentRow > 6) {
-            // Eğer 6 tahmin yapıldıysa, oyun bitmiştir
-            document.getElementById("result").textContent = `Maalesef! Doğru kelime: ${correctWord}`;
+
+        // Oyun bitti mi kontrol et
+        if (currentRow > 6 || guess === correctWord) {
+            if (guess === correctWord && currentRow < 5) {
+                disableRowEditing(currentRow)
+            }
+            disableEnterKey();  // ENTER tuşunu pasif hale getir
+            const resultText = guess === correctWord
+                ? "Tebrikler! Kazandınız!"
+                : `Maalesef! Doğru kelime: ${correctWord}`;
+            document.getElementById("result").textContent = resultText;
         }
+        currentCol = 0;
     }
 }
 
+function disableEnterKey() {
+    // Tüm key elemanlarını seç
+    const keys = document.querySelectorAll(".key");
+
+    // "ENTER" yazan tuşu bul ve devre dışı bırak
+    keys.forEach(key => {
+        if (key.textContent === "ENTER") {
+            key.style.pointerEvents = "none"; // Tıklanamaz hale getir
+            key.style.opacity = "0.5"; // Görsel olarak pasif göster
+        }
+    });
+}
+
+// Tahmini kontrol edip ayarlamalar yapan fonksiyon
 function checkGuess(guess) {
+    /* 
+         --guess: Kullanicinin tahmini
+         --correctWord: Dogru kelime
+         --currentRow: Tahmin sayisi
+         --currentCol: Tahmin edilen satir
+    
+    
+         Tahmini kontrol eder. Tahmin edilen kelimedeki hücreleri renklendirir.
+         Tahmin doğru ise oyunu sonlandırır.
+         Verilen haklarda kelime tahmin edilemezse oyunu sonlandırır. 
+         Renkler ve anlamlari:
+            Yeşil: Tahmin edilen karakter kelimede var ve pozisyonu doğru
+            Turuncu: Tahmin edilen karakter kelimede var ama pozisyonu yanlış
+            Gri: Tahmin edilen karakter kelimeye ait degil
+    */
+
     console.log("Tahmin edilen kelime:", guess); // Doğru tahminin tamamını konsola yazdır
 
     const row = Array.from(document.querySelectorAll(".cell"))
         .slice(currentRow * 5, currentRow * 5 + 5);
-
     const correctWordArray = correctWord.split("");
     const checkedPositions = Array(5).fill(false);
 
@@ -206,8 +243,19 @@ function checkGuess(guess) {
     currentCol = 0;
 }
 
-
+// Tahmine göre klavye renklerini günceller
 function updateKeyboardColors(guess, checkedPositions) {
+    /* 
+         --guess: Kullanicinin tahmini
+         --checkedPositions : Kontrol edilen pozisyonlar
+    
+         Klavyeyi tahmin sonrasinda tahmine göre günceller.
+         Renkler ve anlamlari:
+            Yeşil: Tahmin edilen karakter kelimede var ve pozisyonu doğru
+            Turuncu: Tahmin edilen karakter kelimede var ama pozisyonu yanlış
+            Gri: Tahmin edilen karakter kelimeye ait degil
+    */
+
     const keyboardKeys = document.querySelectorAll(".key");
     guess.split("").forEach((letter, index) => {
         const key = Array.from(keyboardKeys).find(key => key.textContent === letter);
@@ -231,9 +279,6 @@ function updateKeyboardColors(guess, checkedPositions) {
         }
     });
 }
-
-
-
 
 // Oyun başlatma
 initializeGame();
