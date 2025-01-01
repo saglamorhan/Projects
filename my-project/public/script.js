@@ -144,7 +144,24 @@ function handleEnter() {
         // Tahminin sözlükte olup olmadığını kontrol et
         if (!wordList.has(guess)) {
             // Tahmin sözlükte yoksa kullanıcıya hata mesajı göster
-            document.getElementById("result").textContent = "Bu kelime sözlükte yok!";
+            //document.getElementById("result").textContent = "Bu kelime sözlükte yok!";
+            // Tahmin geçerli değilse satırı kırmızıya boya
+            const rowCells = Array.from(
+                document.querySelectorAll(`.cell[data-row='${currentRow}']`)
+            );
+            rowCells.forEach(cell => {
+                cell.style.backgroundColor = "red";
+                cell.style.color = "white";
+            });
+
+            // Rengi geri al (1 saniye sonra)
+            setTimeout(() => {
+                rowCells.forEach(cell => {
+                    cell.style.backgroundColor = ""; // Orijinal rengi geri getir
+                    cell.style.color = "";
+                });
+            }, 1000);
+
             return; // İşlemi sonlandır
         }
 
@@ -157,7 +174,7 @@ function handleEnter() {
 
 
         // Oyun bitti mi kontrol et
-        if (currentRow > 6 || guess === correctWord) {
+        if (currentRow >= 6 || guess === correctWord) {
             if (guess === correctWord && currentRow < 5) {
                 disableRowEditing(currentRow)
             }
