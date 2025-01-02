@@ -87,6 +87,7 @@ body {
     background-color: #4CAF50;  /* Arka plan rengini değiştir */
     color: white;  /* Metin rengini beyaz yap */
     font-weight: bold;  /* Metni kalın yap */
+    pointer-events: painted;
 }
 
 

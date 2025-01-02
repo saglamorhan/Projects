@@ -6,18 +6,184 @@ const gameBoard = document.getElementById("game-board"); // game-board id'sine s
 
 async function initializeGame() {
     try {
-        // Rastgele kelimeyi ata ve kelime listesini yükle
         await loadWordList();
-        correctWord = await assignRandomWord();
-        console.log("Doğru kelime:", correctWord);
 
-        // Oyunu başlat
-        createBoard();
-        createKeyboard();
+        // Eğer doğru kelime daha önce kaydedilmişse, bunu al
+        if (!localStorage.getItem("correctWord")) {
+            correctWord = await assignRandomWord();
+            localStorage.setItem("correctWord", correctWord);  // Doğru kelimeyi kaydet
+            // Oyun başlatma (tahtayı ve klavye oluştur)
+
+        } else {
+            createBoard();
+            createKeyboard();
+            correctWord = localStorage.getItem("correctWord");  // Kaydedilen doğru kelimeyi al
+            loadGameState();
+            loadKeyboardState();  // Klavye renk durumu yüklenir
+            loadGuessState();  // Önceden girilen tahminler yüklenir
+            disablePreviousRows();  // Önceki satırlarda düzenleme yapılmasın
+
+
+        }
+
+        console.log("Doğru kelime:", correctWord);
     } catch (error) {
         console.error("Oyun başlatılamadı:", error.message);
     }
 }
+
+function loadGameState() {
+    // Doğru kelimeyi yükle
+    const savedCorrectWord = localStorage.getItem("correctWord");
+    if (savedCorrectWord) {
+        correctWord = savedCorrectWord;  // Doğru kelimeyi geri yükle
+        //wordList = localStorage.getItem("wordList")
+    }
+
+    // Önceki tahminleri yükle
+    const savedCurrentRow = localStorage.getItem("currentRow");
+    const savedCurrentCol = localStorage.getItem("currentCol");
+    if (savedCurrentRow !== null && savedCurrentCol !== null) {
+        currentRow = parseInt(savedCurrentRow);
+        currentCol = parseInt(savedCurrentCol);
+    }
+
+    // Klavye renklerini yükle
+    const savedKeyColors = JSON.parse(localStorage.getItem("keyColors"));
+    if (savedKeyColors) {
+        const keys = document.querySelectorAll(".key");
+        keys.forEach(key => {
+            const letter = key.textContent;
+            if (savedKeyColors[letter]) {
+                key.style.backgroundColor = savedKeyColors[letter];
+            }
+        });
+    }
+
+    // Tahminler (cell renkleri) ve satır durumunu yükle
+    const savedCells = JSON.parse(localStorage.getItem("cells"));
+    if (savedCells) {
+        savedCells.forEach((cellData, index) => {
+            const row = Math.floor(index / 5);
+            const col = index % 5;
+            const cell = document.querySelector(`.cell[data-row='${row}'][data-index='${col}']`);
+            if (cell) {
+                cell.textContent = cellData.letter;
+                if (cellData.status) {
+                    cell.classList.add(cellData.status);
+                }
+            }
+        });
+    }
+}
+
+function saveGameState() {
+    // Doğru kelimeyi kaydet
+    localStorage.setItem("correctWord", correctWord);
+
+    // Mevcut satır ve sütun bilgisini kaydet
+    localStorage.setItem("currentRow", currentRow);
+    localStorage.setItem("currentCol", currentCol);
+    //localStorage.setItem("wordList", wordList);
+
+    // Klavye renklerini kaydet
+    const keyColors = {};
+    const keys = document.querySelectorAll(".key");
+    keys.forEach(key => {
+        const letter = key.textContent;
+        keyColors[letter] = key.style.backgroundColor;
+    });
+    localStorage.setItem("keyColors", JSON.stringify(keyColors));
+
+    // Tahminler (cell renkleri) kaydet
+    const cells = [];
+    const cellElements = document.querySelectorAll(".cell");
+    cellElements.forEach(cell => {
+        const row = cell.getAttribute("data-row");
+        const index = cell.getAttribute("data-index");
+        cells.push({
+            letter: cell.textContent,
+            status: cell.className.includes("correct") ? "correct" :
+                cell.className.includes("present") ? "present" :
+                    cell.className.includes("absent") ? "absent" : null
+        });
+    });
+    localStorage.setItem("cells", JSON.stringify(cells));
+}
+
+function disablePreviousRows() {
+    for (let row = 0; row < currentRow; row++) {
+        const cells = document.querySelectorAll(`.cell[data-row='${row}']`);
+        cells.forEach(cell => {
+            cell.setAttribute("contenteditable", "false");  // İçeriği değiştirilemez yap
+        });
+    }
+}
+
+// Klavye renklerini kaydet
+function saveKeyboardState() {
+    const keyboardKeys = document.querySelectorAll('.key');
+    const keyboardState = {};
+
+    keyboardKeys.forEach(key => {
+        const letter = key.textContent;
+        if (key.classList.contains('correct')) {
+            keyboardState[letter] = 'correct';
+        } else if (key.classList.contains('present')) {
+            keyboardState[letter] = 'present';
+        } else if (key.classList.contains('absent')) {
+            keyboardState[letter] = 'absent';
+        } else {
+            keyboardState[letter] = 'default'; // Renk değişmemişse
+        }
+    });
+
+    localStorage.setItem('keyboardState', JSON.stringify(keyboardState));
+}
+
+// Klavye renklerini yükle
+function loadKeyboardState() {
+    const keyboardState = JSON.parse(localStorage.getItem('keyboardState'));
+    if (keyboardState) {
+        const keyboardKeys = document.querySelectorAll('.key');
+        keyboardKeys.forEach(key => {
+            const letter = key.textContent;
+            if (keyboardState[letter]) {
+                key.classList.add(keyboardState[letter]);
+            }
+        });
+    }
+}
+
+// Tahminleri kaydet
+function saveGuessState() {
+    const rows = document.querySelectorAll('.row');
+    const guesses = [];
+
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('.cell');
+        const guess = Array.from(cells).map(cell => cell.textContent).join('');
+        guesses.push(guess);
+    });
+
+    localStorage.setItem('guesses', JSON.stringify(guesses));
+}
+
+// Tahminleri yükle
+function loadGuessState() {
+    const guesses = JSON.parse(localStorage.getItem('guesses'));
+    if (guesses) {
+        guesses.forEach((guess, rowIndex) => {
+            const row = document.querySelectorAll('.row')[rowIndex];
+            const cells = row.querySelectorAll('.cell');
+            guess.split('').forEach((letter, colIndex) => {
+                cells[colIndex].textContent = letter;
+            });
+        });
+    }
+}
+
+
 
 // Kelime listesini yükleyen fonksiyon
 async function loadWordList() {
@@ -186,6 +352,7 @@ function handleEnter() {
             showNewGameButton(); // Yeni Oyun tuşunu göster
         }
         currentCol = 0;
+        saveGameState();  // Durum kaydedilsin
     }
 }
 
@@ -193,24 +360,85 @@ function handleEnter() {
 function showNewGameButton() {
     const newGameButton = document.getElementById("new-game");
     newGameButton.style.display = "block"; // Tuşu görünür yap
-    newGameButton.addEventListener("click", resetGame); // Tıklanabilirlik ekle
+    newGameButton.addEventListener("click", startNewGame); // Tıklanabilirlik ekle
 }
 
-// Oyunu sıfırlayan fonksiyon
-function resetGame() {
-    // Tahtayı temizle
-    document.getElementById("game-board").innerHTML = "";
-    document.getElementById("keyboard").innerHTML = "";
-    document.getElementById("result").textContent = "";
+function resetGameState() {
+    localStorage.removeItem('cells');
+    localStorage.removeItem('keyboardState');
+    localStorage.removeItem('guesses');
+    localStorage.removeItem('correctWord');
+    localStorage.removeItem('keyColors')
+    localStorage.removeItem('currentRow')
+    localStorage.removeItem('currentCol')
 
-    // Yeni oyunu başlat
-    currentRow = 0;
+
+}
+
+function clearGameBoard() {
+    // Oyun tahtasını temizle
+    const rows = document.querySelectorAll('.row');
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('.cell');
+        cells.forEach(cell => {
+            cell.textContent = '';  // Hücreyi boşalt
+            cell.classList.remove('correct', 'present', 'absent');  // Renkleri sıfırla
+        });
+    });
+
+    // Klavye renklerini sıfırla
+    const keyboardKeys = document.querySelectorAll('.key');
+    keyboardKeys.forEach(key => {
+        key.classList.remove('correct', 'present', 'absent');
+    });
+
+    // Sonuç mesajını sıfırla
+    document.getElementById("result").textContent = '';
+}
+
+
+function clearKeyboardColor() {
+    const keyboardKeys = document.querySelectorAll('.key');
+    keyboardKeys.forEach(key => {
+        key.classList.remove('correct', 'present', 'absent'); // Ekstra olarak stil değişikliği yapalım
+        key.style.backgroundColor = "";  // Örneğin arka plan rengini sıfırlama
+        key.style.color = "";  // Metin rengini sıfırlama
+    });
+}
+// Oyunu sıfırlayan fonksiyon
+function startNewGame() {
+    // Tahtayı temizle
+    // LocalStorage verilerini temizle
+    resetGameState();
+
+    // Oyun tahtasını temizle
+    clearGameBoard();
+    clearKeyboardColor();
     currentCol = 0;
-    initializeGame();
+    currentRow = 0;
+
+    // Enter tuşunu yeniden aktif hale getir
+    enableEnterKey();
+    // Yeni oyun başlatma
+    initializeGame();  // Oyun başlatma fonksiyonunu çağır
 
     // "Yeni Oyun" tuşunu tekrar gizle
     const newGameButton = document.getElementById("new-game");
     newGameButton.style.display = "none";
+
+
+}
+function enableEnterKey() {
+    // Tüm key elemanlarını seç
+    const keys = document.querySelectorAll(".key");
+
+    // "ENTER" yazan tuşu bul ve yeniden aktif hale getir
+    keys.forEach(key => {
+        if (key.textContent === "ENTER") {
+            key.style.pointerEvents = "auto"; // Tıklanabilir hale getir
+            key.style.opacity = "1"; // Görsel olarak aktif göster
+        }
+    });
 }
 
 function disableEnterKey() {
