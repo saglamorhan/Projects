@@ -3,6 +3,7 @@ let currentRow = 0;
 let currentCol = 0;
 let wordList = new Set();
 const gameBoard = document.getElementById("game-board"); // game-board id'sine sahip div
+let gameOver = false;
 
 async function initializeGame() {
     try {
@@ -31,6 +32,26 @@ async function initializeGame() {
         console.error("Oyun başlatılamadı:", error.message);
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const savedGameOver = JSON.parse(localStorage.getItem('gameOver'));
+
+    if (savedGameOver) {
+        gameOver = true; // Oyun bitti olarak işaretle
+        //showEndMessage(); // Tebrik veya kaybetme mesajı göster
+        showNewGameButton(); // Yeni oyun butonunu göster
+    } else {
+        loadGameState(); // Mevcut oyun durumunu yükle
+    }
+});
+
+function endGame() {
+    gameOver = true; // Oyunun bittiğini işaretle
+    localStorage.setItem('gameOver', JSON.stringify(gameOver)); // Durumu kaydet
+    //showEndMessage(); // Tebrik veya kaybetme mesajı göster
+    showNewGameButton(); // Yeni oyun butonunu göster
+}
+
 
 function loadGameState() {
     // Doğru kelimeyi yükle
@@ -349,6 +370,8 @@ function handleEnter() {
                 ? alert("Tebrikler! Kazandınız!")
                 : alert(`Maalesef! Doğru kelime: ${correctWord}`);
             document.getElementById("result").textContent = resultText;
+            endGame();
+            disableEnterKey()
             showNewGameButton(); // Yeni Oyun tuşunu göster
         }
         currentCol = 0;
@@ -410,6 +433,8 @@ function startNewGame() {
     // Tahtayı temizle
     // LocalStorage verilerini temizle
     resetGameState();
+    gameOver = false;
+    localStorage.setItem('gameOver', gameOver);
 
     // Oyun tahtasını temizle
     clearGameBoard();
@@ -534,17 +559,17 @@ function updateKeyboardColors(guess, checkedPositions) {
             // Eğer harf doğru pozisyonda ise, yeşil yap
             if (checkedPositions[index]) {
                 key.style.backgroundColor = "green";
-                key.style.color = "white";
+                //key.style.color = "white";
             }
             // Eğer harf yanlış pozisyonda ise, turuncu yap
             else if (correctWord.includes(letter)) {
                 key.style.backgroundColor = "orange";
-                key.style.color = "white";
+                //key.style.color = "white";
             }
             // Eğer harf doğru değilse, gri yap
             else {
                 key.style.backgroundColor = "grey";
-                key.style.color = "white";
+                //key.style.color = "white";
             }
         }
     });
