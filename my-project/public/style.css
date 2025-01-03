@@ -16,6 +16,51 @@ body {
     color: #4CAF50;
 }
 
+
+.title-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.word-container {
+    display: flex;
+    justify-content: center;
+    gap: 3px; /* Harfler arası boşluk */
+    margin-bottom: 5px;
+}
+
+.letter {
+    display: flex;
+    width: 30px; /* Kutu genişliği ile eşleşecek */
+    height: 30px;
+    font-size: 24px;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+}
+
+.box-container {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.box {
+    display: flex;
+    width: 30px;
+    height: 30px;
+    border: 2px solid black;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+
 /* Oyun tahtasını ortalar */
 #game-board {
     display: flex;

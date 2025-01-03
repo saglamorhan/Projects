@@ -366,12 +366,12 @@ function handleEnter() {
                 disableRowEditing(currentRow)
             }
             disableEnterKey();  // ENTER tuşunu pasif hale getir
+            /* 
             const resultText = guess === correctWord
                 ? alert("Tebrikler! Kazandınız!")
-                : alert(`Maalesef! Doğru kelime: ${correctWord}`);
-            document.getElementById("result").textContent = resultText;
+                : al ert(`Maalesef! Doğru kelime: ${correctWord}`);
+            */
             endGame();
-            disableEnterKey()
             showNewGameButton(); // Yeni Oyun tuşunu göster
         }
         currentCol = 0;
@@ -428,6 +428,7 @@ function clearKeyboardColor() {
         key.style.color = "";  // Metin rengini sıfırlama
     });
 }
+
 // Oyunu sıfırlayan fonksiyon
 function startNewGame() {
     // Tahtayı temizle
@@ -453,6 +454,7 @@ function startNewGame() {
 
 
 }
+
 function enableEnterKey() {
     // Tüm key elemanlarını seç
     const keys = document.querySelectorAll(".key");
@@ -527,12 +529,6 @@ function checkGuess(guess) {
     }
 
     updateKeyboardColors(guess, checkedPositions);
-
-    if (guess === correctWord) {
-        document.getElementById("result").textContent = "Tebrikler! Kazandınız!";
-    } else if (currentRow === 6) {
-        document.getElementById("result").textContent = `Maalesef! Doğru kelime: ${correctWord}`;
-    }
 
     //currentRow++;
     currentCol = 0;
