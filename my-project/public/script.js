@@ -490,6 +490,7 @@ function checkGuess(guess) {
     const correctWordArray = correctWord.split("");
     const checkedPositions = Array(5).fill(false);
 
+
     // İlk geçiş: Doğru pozisyon için kontrol (Yeşil)
     for (let i = 0; i < 5; i++) {
         if (guess[i] === correctWordArray[i]) {
@@ -498,7 +499,6 @@ function checkGuess(guess) {
             correctWordArray[i] = null;
         }
     }
-
     // İkinci geçiş: Yanlış pozisyon için kontrol (Turuncu)
     for (let i = 0; i < 5; i++) {
         if (!row[i].classList.contains("correct")) {
@@ -512,48 +512,51 @@ function checkGuess(guess) {
         }
     }
 
-    updateKeyboardColors(guess, checkedPositions);
+
+
+
+    updateKeyboardColors(guess, checkedPositions, correctWord);
 
     //currentRow++;
     currentCol = 0;
 }
 
 // Tahmine göre klavye renklerini günceller
-function updateKeyboardColors(guess, checkedPositions) {
-    /* 
-         --guess: Kullanicinin tahmini
-         --checkedPositions : Kontrol edilen pozisyonlar
-    
-         Klavyeyi tahmin sonrasinda tahmine göre günceller.
-         Renkler ve anlamlari:
-            Yeşil: Tahmin edilen karakter kelimede var ve pozisyonu doğru
-            Turuncu: Tahmin edilen karakter kelimede var ama pozisyonu yanlış
-            Gri: Tahmin edilen karakter kelimeye ait degil
-    */
-
+function updateKeyboardColors(guess, checkedPositions, correctWord) {
     const keyboardKeys = document.querySelectorAll(".key");
+
+    // Klavye renk öncelik sırası
+    const colorPriority = {
+        "green": 3,
+        "orange": 2,
+        "grey": 1,
+        "": 0 // Hiç renk atanmamış
+    };
+
     guess.split("").forEach((letter, index) => {
-        const key = Array.from(keyboardKeys).find(key => key.textContent === letter);
+        const key = Array.from(keyboardKeys).find(k => k.textContent === letter);
 
         if (key) {
-            // Eğer harf doğru pozisyonda ise, yeşil yap
+            let currentColor = key.style.backgroundColor || ""; // Mevcut renk
+            let newColor = "";
+
             if (checkedPositions[index]) {
-                key.style.backgroundColor = "green";
-                //key.style.color = "white";
+                newColor = "green"; // Doğru pozisyon
+            } else if (correctWord.includes(letter)) {
+                newColor = "orange"; // Yanlış pozisyon
+            } else {
+                newColor = "grey"; // Kelimede yok
             }
-            // Eğer harf yanlış pozisyonda ise, turuncu yap
-            else if (correctWord.includes(letter)) {
-                key.style.backgroundColor = "orange";
-                //key.style.color = "white";
-            }
-            // Eğer harf doğru değilse, gri yap
-            else {
-                key.style.backgroundColor = "grey";
-                //key.style.color = "white";
+
+            // Eğer yeni renk daha yüksek önceliğe sahipse değiştir
+            if (colorPriority[newColor] > colorPriority[currentColor]) {
+                key.style.backgroundColor = newColor;
             }
         }
     });
 }
+
+
 
 // Oyun başlatma
 initializeGame();
