@@ -4,6 +4,7 @@ let currentCol = 0;
 let wordList = new Set();
 const gameBoard = document.getElementById("game-board"); // game-board id'sine sahip div
 let gameOver = false;
+let enterKeyEnable;
 
 async function initializeGame() {
     try {
