@@ -6,13 +6,13 @@ const gameBoard = document.getElementById("game-board"); // game-board id'sine s
 let gameOver = false;
 let enterKeyEnable;
 
-async function initializeGame() {
+function initializeGame() {
     try {
-        await loadWordList();
+        loadWordList();
 
         // Eğer doğru kelime daha önce kaydedilmişse, bunu al
         if (!localStorage.getItem("correctWord")) {
-            correctWord = await assignRandomWord();
+            correctWord = assignRandomWord();
             localStorage.setItem("correctWord", correctWord);  // Doğru kelimeyi kaydet
             // Oyun başlatma (tahtayı ve klavye oluştur)
 
@@ -208,36 +208,19 @@ function loadGuessState() {
 
 
 // Kelime listesini yükleyen fonksiyon
-async function loadWordList() {
+function loadWordList() {
     try {
-        const response = await fetch("./bes_harfli_kelime_listesi.txt");
-        if (!response.ok) throw new Error("Kelime dosyası yüklenemedi.");
-
-        const text = await response.text();
-        const words = text
-            .split("\n")
-            .map(word => word.trim().toUpperCase())
-            .filter(word => word.length === 5);
-
         // Kelimeleri Set'e ekleyelim
-        words.forEach(word => wordList.add(word));
+        besHarfliWordList.forEach(word => wordList.add(word));
     } catch (error) {
-        console.error("Hata:", error.message);
+        console.error("Hata: ", error.message);
     }
 }
 
 // Rastgele kelime seçen fonksiyon
-async function assignRandomWord() {
+function assignRandomWord() {
     try {
-        const response = await fetch("./bes_harfli_kelime_listesi.txt");
-        if (!response.ok) throw new Error("Kelime dosyası yüklenemedi.");
-
-        const text = await response.text();
-        const words = text
-            .split("\n")
-            .map(word => word.trim().toUpperCase())
-            .filter(word => word.length === 5);
-        return words[Math.floor(Math.random() * words.length)];
+        return besHarfliWordList[Math.floor(Math.random() * besHarfliWordList.length)];
     } catch (error) {
         console.error("Hata:", error.message);
         return "AAAAA"; // Hata durumunda varsayılan kelime
