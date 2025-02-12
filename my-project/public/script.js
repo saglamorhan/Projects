@@ -303,6 +303,30 @@ function disableRowEditing(row) {
     cells.forEach(cell => cell.classList.add("disabled"));  // Hücreleri düzenlemeye kapat
 }
 
+function revealCorrectWord(sil) {
+    if (sil) {
+        const rowCells = Array.from(
+            document.querySelectorAll(`.cell[data-row='${currentRow - 1}']`)
+        );
+        rowCells.forEach((cell, index) => {
+            cell.textContent = correctWord[index];
+            cell.style.backgroundColor = "#4CAF50";/*#e0d5d5 */
+            cell.style.color = "white";
+            cell.style.border = "1px solid red";
+        });
+    } else {
+        const rowCells = Array.from(
+            document.querySelectorAll(`.cell[data-row='${currentRow - 1}']`)
+        );
+        rowCells.forEach((cell, index) => {
+            cell.textContent = correctWord[index];
+            cell.style.backgroundColor = "#e0d5d5";/*#e0d5d5 */
+            cell.style.color = "black";
+            cell.style.border = "1px solid black";
+        });
+    }
+}
+
 // Enter tuşuna basıldığında yapılacakları ayarlayan fonksiyon
 function handleEnter() {
     if (currentCol === 5) { // Eğer 5 harf tamamlandıysa
@@ -356,6 +380,7 @@ function handleEnter() {
                 : al ert(`Maalesef! Doğru kelime: ${correctWord}`);
             */
             endGame();
+            revealCorrectWord(true);
             showNewGameButton(); // Yeni Oyun tuşunu göster
         }
         currentCol = 0;
@@ -417,6 +442,7 @@ function clearKeyboardColor() {
 function startNewGame() {
     // Tahtayı temizle
     // LocalStorage verilerini temizle
+    revealCorrectWord(false);
     resetGameState();
     gameOver = false;
     localStorage.setItem('gameOver', gameOver);
@@ -527,7 +553,7 @@ function updateKeyboardColors(guess, checkedPositions, correctWord) {
 
     // Klavye renk öncelik sırası
     const colorPriority = {
-        "green": 3,
+        "#4CAF50": 3,
         "orange": 2,
         "grey": 1,
         "": 0 // Hiç renk atanmamış
@@ -541,7 +567,7 @@ function updateKeyboardColors(guess, checkedPositions, correctWord) {
             let newColor = "";
 
             if (checkedPositions[index]) {
-                newColor = "green"; // Doğru pozisyon
+                newColor = "#4CAF50"; // Doğru pozisyon- green
             } else if (correctWord.includes(letter)) {
                 newColor = "orange"; // Yanlış pozisyon
             } else {
