@@ -97,6 +97,11 @@ function loadGameState() {
             }
         });
     }
+
+    const revealWord = localStorage.getItem("revealWord");
+    if (revealWord) {
+        revealCorrectWord(revealWord);
+    }
 }
 
 function saveGameState() {
@@ -381,6 +386,7 @@ function handleEnter() {
             */
             endGame();
             revealCorrectWord(true);
+            localStorage.setItem("revealWord", true);
             showNewGameButton(); // Yeni Oyun tuşunu göster
         }
         currentCol = 0;
@@ -403,6 +409,7 @@ function resetGameState() {
     localStorage.removeItem('keyColors')
     localStorage.removeItem('currentRow')
     localStorage.removeItem('currentCol')
+    localStorage.removeItem('revealWord')
 
 
 }
@@ -442,6 +449,7 @@ function clearKeyboardColor() {
 function startNewGame() {
     // Tahtayı temizle
     // LocalStorage verilerini temizle
+    localStorage.setItem("revealWord", false)
     revealCorrectWord(false);
     resetGameState();
     gameOver = false;
