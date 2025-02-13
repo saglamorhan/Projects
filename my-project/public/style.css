@@ -1,9 +1,12 @@
 /* Sayfanın tamamını kapsayan stil */
+*{
+    overflow: hidden;
+}
 body {
     display: flex;
     justify-content: center;  /* Yatayda ortalar */
     align-items: center;      /* Dikeyde ortalar */
-    height: 100vh;            /* Sayfanın yüksekliğini tam al */
+    max-height: 100vh;        /* Sayfanın yüksekliğini tam al */
     margin: 0;                /* Sayfa kenar boşluklarını sıfırlar */
     flex-direction: column;   /* İçerikleri dikey sıraya dizer */
     background-color: #e0d5d5;  /* Sayfa arka planı */
@@ -13,30 +16,38 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 20px;
-    margin-bottom: 10px;
+    margin-top: 1vh;
+    margin-bottom: 0.2vh;
 }
 
 .box-container {
     display: flex;
     justify-content: center;
-    gap: 3px;
-    margin-bottom: 5px;
+    gap: 0.4vh;
+    margin-bottom: 0.4vh;
 }
 
 .box {
     display: flex;
-    width: 30px;
-    height: 30px;
+    width: 4vh;
+    height: 4vh;
+
     border: 1px solid gray;
     justify-content: center;
     align-items: center;
-    font-size: 24px;
+    line-height: 3vh;
+    font-size: 2.5vh;
     font-family: 'Times New Roman', Times, serif;
     background-color: #4CAF50;
     color: #fff;
 }
 
+
+.game-container{
+    width: 100%;
+    max-height: 90vh;
+    margin-top: 1vh;
+}
 
 
 /* Oyun tahtasını ortalar */
@@ -44,23 +55,29 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 10px;
+
+
 }
 
 /* Her satırdaki hücreleri yatay sıraya dizer */
 .row {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(5, 7vh); /* 6 sütunlu grid */
+    gap: 0.2vh;
 }
 
 /* Hücrelerin stilini belirler */
 .cell {
-    width: 50px;
-    height: 50px;
-    margin: 2px;
-    border: 1px solid black;
+    box-sizing: border-box;
+    border: 0.1vh solid black;
     text-align: center;
-    font-size: 24px;
-    line-height: 50px;
+    width: 100%; /* Grid hücresine tam oturması için */
+    height: 7vh;
+    margin-top: 0.2vh;
+    text-align: center;
+    line-height: 7vh;
+    font-size: 4vh;
+    cursor: pointer;
 
 }
 
@@ -88,32 +105,40 @@ body {
 /* Klavye kısmını ortalar */
 #keyboard {
     display: grid;
-    grid-template-columns: repeat(6, 5vh); /* 6 sütunlu grid */
-    gap: 5px;
-    max-width: 80vw;
-    margin-top: 10px;
+    grid-template-columns: repeat(6, 5.5vh); /* 6 sütunlu grid */
+    gap: 0.5vh;
+    margin-top: 2vh;
     justify-content: center;
 }
 
 /* Klavye tuşlarının stilini belirler */
 .key {
     width: 100%; /* Grid hücresine tam oturması için */
-    height: 4vh;
-    border: 1px solid #bbb;
-    border-radius: 5px;
+    height: 5vh;
+    box-sizing: border-box;
+    border: 1px solid #aaa;
+    border-radius: 1vh;
     text-align: center;
-    line-height: 4vh;
-    font-size: 18px;
+    line-height: 5vh;
+    font-size: 3vh;
     cursor: pointer;
 }
 
 /* Enter tuşu en altta tam genişlikte olacak */
 .enter-key {
-    grid-column: span 6; /* Tüm 6 sütunu kapla */
+    width: 35.5vh;
+    /* grid-column: span 6; Tüm 6 sütunu kapla */
     background-color: #4CAF50;
+    margin-top: 1vh;
     color: white;
     font-weight: bold;
     text-align: center;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.enter-key:hover{
+    background-color: #06c40d;
 }
 
 .cell.disabled {
@@ -123,14 +148,20 @@ body {
 }
 
 #new-game {
-    margin-top: 5px;
-    min-width: 280px;   /* ENTER tuşunun tam genişliğe sahip olmasını sağlar */
-    min-height: 30px;
+    padding: 0;
+    width: 35.5vh;
+    height: 5vh;
+    display: block;
+    margin: 0 auto;
+    margin-top: 1vh;
+    padding: none;
     background-color: #ae4f4c;  /* Arka plan rengini değiştir */
     color: white;  /* Metin rengini beyaz yap */
     font-weight: bold;  /* Metni kalın yap */
+    line-height: 5vh;
+    font-size: 2vh;
     border: none;
-    border-radius: 5px;
+    border-radius: 1vh;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }

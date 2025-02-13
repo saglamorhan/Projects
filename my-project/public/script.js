@@ -312,7 +312,7 @@ function revealCorrectWord(sil) {
             cell.textContent = correctWord[index];
             cell.style.backgroundColor = "#4CAF50";/*#e0d5d5 */
             cell.style.color = "white";
-            cell.style.border = "1px solid red";
+            cell.style.border = "2px solid red";
         });
     } else {
         const rowCells = Array.from(
