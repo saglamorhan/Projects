@@ -46,6 +46,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+document.addEventListener("keydown", (event) => {
+    const key = event.key.toUpperCase(); // Harfi büyük harfe çevir
+    const validLetters = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"; // Geçerli harfler
+
+    if (validLetters.includes(key)) {
+        handleKeyInput(key); // Eğer geçerli bir harf ise, oyuna ekle
+    } else if (event.key === "Backspace") {
+        handleBackspace();
+    } else if (event.key === "Enter") {
+        handleEnter();
+    }
+
+    event.preventDefault(); // Geçersiz karakterlerin girişini engelle
+});
+
 function endGame() {
     gameOver = true; // Oyunun bittiğini işaretle
     localStorage.setItem('gameOver', JSON.stringify(gameOver)); // Durumu kaydet
