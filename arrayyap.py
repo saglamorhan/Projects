@@ -13,7 +13,7 @@ def read_words_from_file(file_path):
         return []
 
 # Dosya adını belirt
-file_path = "bes_harfli_kelime_listesi.txt"
+file_path = "6_harfli_kelimeler.txt"
 
 # Kelime listesini oku
 word_list = read_words_from_file(file_path)
@@ -22,7 +22,7 @@ word_list = read_words_from_file(file_path)
 js_content = f"const wordList = {json.dumps(word_list, ensure_ascii=False)};"
 
 # Yeni JS dosyasına yaz
-with open("kelimearray.js", "w", encoding="utf-8") as js_file:
+with open("6_harfli_kelimearray.js", "w", encoding="utf-8") as js_file:
     js_file.write(js_content)
 
 print("Kelime listesi kelimeler.js dosyasına kaydedildi.")

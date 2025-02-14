@@ -1,39 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Kelime Oyunu - Giriş</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+    </style>
 </head>
-<div class="title-container">
-    <div class="box-container">
-        <span class="box">K</span>
-        <span class="box">E</span>
-        <span class="box">L</span>
-        <span class="box">İ</span>
-        <span class="box">M</span>
-        <span class="box">E</span>
-    </div>
-    <div class="box-container">
-        <span class="box">O</span>
-        <span class="box">Y</span>
-        <span class="box">U</span>
-        <span class="box">N</span>
-        <span class="box">U</span>
-    </div>
-</div>
-<div class="game-container">
-    <div id="game-board"></div>
-    <div id="keyboard"></div>
-    <div id="result"></div>
-    <button id="new-game" style="display: none;">Yeni Oyun</button> <!-- Yeni Oyun tuşu -->
-</div>
 
 <body>
-    <script src="kelimearray.js"></script>
-    <script src="script.js"></script>
+    <div class="title-container">
+        <div class="box-container">
+            <span class="box">K</span>
+            <span class="box">E</span>
+            <span class="box">L</span>
+            <span class="box">İ</span>
+            <span class="box">M</span>
+            <span class="box">E</span>
+        </div>
+        <div class="box-container">
+            <span class="box">O</span>
+            <span class="box">Y</span>
+            <span class="box">U</span>
+            <span class="box">N</span>
+            <span class="box">U</span>
+        </div>
+    </div>
+    <div class="option-container">
+
+        <button class="button four" onclick="startGame(4)">4 Harfli</button>
+        <button class="button five" onclick="startGame(5)">5 Harfli</button>
+        <button class="button six" onclick="startGame(6)">6 Harfli</button>
+
+    </div>
+
+    <script>
+        function startGame(wordLength) {
+            // Seçilen kelime uzunluğunu localStorage ile sakla
+            localStorage.setItem("wordLength", wordLength);
+
+            // Oyun sayfasına yönlendir
+            window.location.href = "game1.html";
+        }
+    </script>
 
 </body>
 

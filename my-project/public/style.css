@@ -55,6 +55,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 
 
 }
@@ -62,8 +63,9 @@ body {
 /* Her satırdaki hücreleri yatay sıraya dizer */
 .row {
     display: grid;
-    grid-template-columns: repeat(5, 7vh); /* 6 sütunlu grid */
+    grid-template-columns: repeat(var(--wordLength), minmax(7vh, 1fr)); /* Kelime uzunluğuna göre sütunları ayarlar */
     gap: 0.2vh;
+    margin-bottom: 0.5vh;
 }
 
 /* Hücrelerin stilini belirler */
@@ -80,7 +82,9 @@ body {
     cursor: pointer;
 
 }
-
+.cell:hover {
+    background-color: #f0f0f0;
+}
 /* Doğru harf (yeşil) */
 .cell.correct {
     background-color: #4caf50;
@@ -168,4 +172,43 @@ body {
 
 #new-game:hover {
     background-color: #dd2b1f;
+}
+
+
+
+/* İndex html css*/
+.option-container{
+    display: flex;
+    flex-direction: column;
+    margin-top: 20vh;
+
+
+}
+
+
+.button {
+    display: block;
+    width: 30vh;
+    margin: 2vh auto;
+    padding: 15px;
+    font-size: 4vh;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+.button:hover {
+    opacity: 0.8;
+}
+
+.four {
+    background-color: lightblue;
+}
+
+.five {
+    background-color: lightgreen;
+}
+
+.six {
+    background-color: lightcoral;
 }

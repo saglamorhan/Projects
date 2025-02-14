@@ -5,27 +5,50 @@ let wordList = new Set();
 const gameBoard = document.getElementById("game-board"); // game-board id'sine sahip div
 let gameOver = false;
 let enterKeyEnable;
-
+let wordLength;
+let boardStateExist = false;
 function initializeGame() {
     try {
-        loadWordList();
+        wordLength = parseInt(localStorage.getItem("wordLength"));
+        loadWordList(wordLength);
 
         // Eğer doğru kelime daha önce kaydedilmişse, bunu al
         if (!localStorage.getItem("correctWord")) {
             correctWord = assignRandomWord();
             localStorage.setItem("correctWord", correctWord);  // Doğru kelimeyi kaydet
             // Oyun başlatma (tahtayı ve klavye oluştur)
+            boardStateExist = localStorage.getItem("boardState") === "true";
+            if (!boardStateExist) {
+                createBoard(wordLength);
+                createKeyboard();
+                loadGameState();
+                loadKeyboardState();  // Klavye renk durumu yüklenir
+                loadGuessState();  // Önceden girilen tahminler yüklenir
+                disablePreviousRows();  // Önceki satırlarda düzenleme yapılmasın
+
+            }
+            localStorage.setItem("boardState", true);
+
 
         } else {
-            createBoard();
-            createKeyboard();
-            correctWord = localStorage.getItem("correctWord");  // Kaydedilen doğru kelimeyi al
-            loadGameState();
-            loadKeyboardState();  // Klavye renk durumu yüklenir
-            loadGuessState();  // Önceden girilen tahminler yüklenir
-            disablePreviousRows();  // Önceki satırlarda düzenleme yapılmasın
+            if (localStorage.getItem("correctWord").length == wordLength) {
+                createBoard(wordLength);
+                createKeyboard();
+                localStorage.setItem("boardState", true);
+                correctWord = localStorage.getItem("correctWord");  // Kaydedilen doğru kelimeyi al
+                loadGameState();
+                loadKeyboardState();  // Klavye renk durumu yüklenir
+                loadGuessState();  // Önceden girilen tahminler yüklenir
+                disablePreviousRows();  // Önceki satırlarda düzenleme yapılmasın
 
+            } else {
+                // Girişde seçilen kelime uzunluğu bellekte önceden belirlenmiş 
+                // kelime uzunluğundan farklı olduğu için yeniden oyun başlatılıyor 
+                // böylece bellekteki kelime sıfırlanıyor
 
+                localStorage.setItem("boardState", false);
+                startNewGame();
+            }
         }
 
         console.log("Doğru kelime:", correctWord);
@@ -36,7 +59,6 @@ function initializeGame() {
 
 document.addEventListener('DOMContentLoaded', () => {
     const savedGameOver = JSON.parse(localStorage.getItem('gameOver'));
-
     if (savedGameOver) {
         gameOver = true; // Oyun bitti olarak işaretle
         //showEndMessage(); // Tebrik veya kaybetme mesajı göster
@@ -228,10 +250,17 @@ function loadGuessState() {
 
 
 // Kelime listesini yükleyen fonksiyon
-function loadWordList() {
+function loadWordList(wordLength) {
     try {
         // Kelimeleri Set'e ekleyelim
-        besHarfliWordList.forEach(word => wordList.add(word));
+        if (wordLength === 4) {
+            wordList4harf.forEach(word => wordList.add(word));
+        } else if (wordLength === 5) {
+            wordList5harf.forEach(word => wordList.add(word));
+        } else {
+            wordList6harf.forEach(word => wordList.add(word));
+        }
+
     } catch (error) {
         console.error("Hata: ", error.message);
     }
@@ -240,21 +269,42 @@ function loadWordList() {
 // Rastgele kelime seçen fonksiyon
 function assignRandomWord() {
     try {
-        return besHarfliWordList[Math.floor(Math.random() * besHarfliWordList.length)];
+        if (wordLength === 4) {
+            return wordList4harf[Math.floor(Math.random() * wordList4harf.length)];
+        } else if (wordLength === 5) {
+            return wordList5harf[Math.floor(Math.random() * wordList5harf.length)];
+        } else {
+            return wordList6harf[Math.floor(Math.random() * wordList6harf.length)];
+        }
+
     } catch (error) {
         console.error("Hata:", error.message);
-        return "AAAAA"; // Hata durumunda varsayılan kelime
+        if (wordLength === 4) {
+            return "AAAA"; // Hata durumunda varsayılan kelime
+        } else if (wordLength === 5) {
+            return "AAAAA"; // Hata durumunda varsayılan kelime
+        } else {
+            return "AAAAAA"; // Hata durumunda varsayılan kelime
+        }
     }
 }
 
 // Oyun tahtasını oluşturan fonksiyon
-const createBoard = () => {
+// Oyun tahtasını oluşturan fonksiyon
+// Oyun tahtasını oluşturan fonksiyon
+// Oyun tahtasını oluşturan fonksiyon
+const createBoard = (wordLength) => {
+    const gameBoard = document.getElementById("game-board"); // gameBoard elementini seçiyoruz
+
+    // Kelime uzunluğunu CSS değişkeni olarak ayarlıyoruz
+    gameBoard.style.setProperty('--wordLength', wordLength); // CSS değişkenini dinamik olarak ayarlıyoruz
+
     for (let row = 0; row < 6; row++) {  // 6 satır oluşturacağız (6 tahmin)
         const rowDiv = document.createElement("div");
         rowDiv.classList.add("row");
 
-        // Her satırda 5 hücre olacak
-        for (let col = 0; col < 5; col++) {
+        // Her satırda wordLength kadar hücre olacak
+        for (let col = 0; col < wordLength; col++) {
             const cell = document.createElement("div");
             cell.classList.add("cell");
             cell.setAttribute("data-row", row);  // Satır numarasını atıyoruz
@@ -266,6 +316,7 @@ const createBoard = () => {
         gameBoard.appendChild(rowDiv);
     }
 };
+
 
 // Oyunda kullanilacak klavyeyi oluşturan fonksiyon
 function createKeyboard() {
@@ -296,7 +347,7 @@ function createKeyboard() {
 
 // Tahmini oyun tahtasındaki ilgili satıra yazan fonksiyon
 function handleKeyInput(letter) {
-    if (currentCol < 5 && currentRow < 6) {  // 5 harfli kelimeyi oluşturana kadar
+    if (currentCol < wordLength && currentRow < 6) {  // 5 harfli kelimeyi oluşturana kadar
         const cell = document.querySelector(`.cell[data-row='${currentRow}'][data-index='${currentCol}']`);
         if (cell) {
             cell.textContent = letter.toUpperCase(); // Harfi hücreye yerleştir
@@ -349,7 +400,7 @@ function revealCorrectWord(sil) {
 
 // Enter tuşuna basıldığında yapılacakları ayarlayan fonksiyon
 function handleEnter() {
-    if (currentCol === 5) { // Eğer 5 harf tamamlandıysa
+    if (currentCol == wordLength) { // Eğer wordLength kadar harf tamamlandıysa
         const guess = Array.from(
             document.querySelectorAll(`.cell[data-row='${currentRow}']`)
         )
@@ -421,11 +472,10 @@ function resetGameState() {
     localStorage.removeItem('keyboardState');
     localStorage.removeItem('guesses');
     localStorage.removeItem('correctWord');
-    localStorage.removeItem('keyColors')
-    localStorage.removeItem('currentRow')
-    localStorage.removeItem('currentCol')
-    localStorage.removeItem('revealWord')
-
+    localStorage.removeItem('keyColors');
+    localStorage.removeItem('currentRow');
+    localStorage.removeItem('currentCol');
+    localStorage.removeItem('revealWord');
 
 }
 
@@ -436,7 +486,7 @@ function clearGameBoard() {
         const cells = row.querySelectorAll('.cell');
         cells.forEach(cell => {
             cell.textContent = '';  // Hücreyi boşalt
-            cell.classList.remove('correct', 'present', 'absent');  // Renkleri sıfırla
+            cell.classList.remove('correct', 'present', 'absent', 'disabled');  // Renkleri sıfırla
         });
     });
 
@@ -535,13 +585,13 @@ function checkGuess(guess) {
     console.log("Tahmin edilen kelime:", guess); // Doğru tahminin tamamını konsola yazdır
 
     const row = Array.from(document.querySelectorAll(".cell"))
-        .slice(currentRow * 5, currentRow * 5 + 5);
+        .slice(currentRow * wordLength, currentRow * wordLength + wordLength);
     const correctWordArray = correctWord.split("");
-    const checkedPositions = Array(5).fill(false);
+    const checkedPositions = Array(wordLength).fill(false);
 
 
     // İlk geçiş: Doğru pozisyon için kontrol (Yeşil)
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < wordLength; i++) {
         if (guess[i] === correctWordArray[i]) {
             row[i].classList.add("correct");
             checkedPositions[i] = true;
@@ -549,7 +599,7 @@ function checkGuess(guess) {
         }
     }
     // İkinci geçiş: Yanlış pozisyon için kontrol (Turuncu)
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < wordLength; i++) {
         if (!row[i].classList.contains("correct")) {
             const index = correctWordArray.indexOf(guess[i]);
             if (index !== -1) {
