@@ -64,7 +64,7 @@ body {
 .row {
     display: grid;
     grid-template-columns: repeat(var(--wordLength), minmax(7vh, 1fr)); /* Kelime uzunluğuna göre sütunları ayarlar */
-    gap: 0.2vh;
+    gap: 0.4vh;
     margin-bottom: 0.5vh;
 }
 
@@ -75,7 +75,7 @@ body {
     text-align: center;
     width: 100%; /* Grid hücresine tam oturması için */
     height: 7vh;
-    margin-top: 0.2vh;
+
     text-align: center;
     line-height: 7vh;
     font-size: 4vh;
@@ -134,6 +134,7 @@ body {
     /* grid-column: span 6; Tüm 6 sütunu kapla */
     background-color: #4CAF50;
     margin-top: 1vh;
+    font-size: 3vh;
     color: white;
     font-weight: bold;
     text-align: center;
@@ -141,8 +142,9 @@ body {
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
-.enter-key:hover{
-    background-color: #06c40d;
+.backspace{
+    background-color: #134358;
+    color: #fff
 }
 
 .cell.disabled {
@@ -150,31 +152,52 @@ body {
     /*color: #808080;            Daha açık yazı rengi */
     pointer-events: none;     /* Tıklama ve etkileşim devre dışı */
 }
-
-#new-game {
-    padding: 0;
+.button-container{
+    display: flex;
     width: 35.5vh;
+    margin: 0 auto;
+}
+#new-game {
+
+    padding: 0;
+    width: 17vh;
     height: 5vh;
     display: block;
-    margin: 0 auto;
     margin-top: 1vh;
-    padding: none;
+    margin-right:1.5vh;
     background-color: #ae4f4c;  /* Arka plan rengini değiştir */
     color: white;  /* Metin rengini beyaz yap */
     font-weight: bold;  /* Metni kalın yap */
     line-height: 5vh;
-    font-size: 2vh;
+    font-size: 2.5vh;
     border: none;
     border-radius: 1vh;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-#new-game:hover {
-    background-color: #dd2b1f;
+
+#home-page{
+    padding: 0;
+    width: 35.5vh;
+    height: 5vh;
+    display: block;
+    margin-top: 1vh;
+    padding: none;
+    background-color: rgb(206, 155, 59);  /* Arka plan rengini değiştir */
+    color: white;  /* Metin rengini beyaz yap */
+    font-weight: bold;  /* Metni kalın yap */
+    line-height: 5vh;
+    font-size: 2.5vh;
+    border: none;
+    border-radius: 1vh;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-
+.gc-button:hover{
+    opacity: 0.8;
+}
 
 /* İndex html css*/
 .option-container{

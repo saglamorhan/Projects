@@ -331,13 +331,13 @@ function createKeyboard() {
     });
 
     const backspaceKey = document.createElement("div");
-    backspaceKey.className = "key";
+    backspaceKey.className = "key backspace";
     backspaceKey.textContent = "⌫";
     backspaceKey.addEventListener("click", handleBackspace);
     keyboard.appendChild(backspaceKey);
 
     const enterKey = document.createElement("div");
-    enterKey.className = "key enter-key";
+    enterKey.className = "key enter-key gc-button";
     enterKey.textContent = "ENTER";
     enterKey.addEventListener("click", handleEnter);
     keyboard.appendChild(enterKey);
@@ -465,6 +465,8 @@ function showNewGameButton() {
     const newGameButton = document.getElementById("new-game");
     newGameButton.style.display = "block"; // Tuşu görünür yap
     newGameButton.addEventListener("click", startNewGame); // Tıklanabilirlik ekle
+    const homePageButton = document.getElementById("home-page");
+    homePageButton.style.width = "17vh";
 }
 
 function resetGameState() {
@@ -534,6 +536,8 @@ function startNewGame() {
     // "Yeni Oyun" tuşunu tekrar gizle
     const newGameButton = document.getElementById("new-game");
     newGameButton.style.display = "none";
+    const homePageButton = document.getElementById("home-page");
+    homePageButton.style.width = "35.5vh";
 
 
 }
@@ -659,6 +663,10 @@ if (localStorage.getItem("wordLength") == null) {
     // Oyun sayfasına yönlendir
     window.location.href = "index.html";
 }
-
+const homePageButton = document.getElementById("home-page");
+homePageButton.addEventListener("click", () => {
+    // Oyunu yenile
+    window.location.href = "index.html";
+});
 // Oyun başlatma
 initializeGame();
