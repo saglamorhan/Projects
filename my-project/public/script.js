@@ -123,8 +123,8 @@ function loadGameState() {
     const savedCells = JSON.parse(localStorage.getItem("cells"));
     if (savedCells) {
         savedCells.forEach((cellData, index) => {
-            const row = Math.floor(index / 5);
-            const col = index % 5;
+            const row = Math.floor(index / wordLength);
+            const col = index % wordLength;
             const cell = document.querySelector(`.cell[data-row='${row}'][data-index='${col}']`);
             if (cell) {
                 cell.textContent = cellData.letter;
@@ -655,7 +655,10 @@ function updateKeyboardColors(guess, checkedPositions, correctWord) {
     });
 }
 
-
+if (localStorage.getItem("wordLength") == null) {
+    // Oyun sayfasına yönlendir
+    window.location.href = "index.html";
+}
 
 // Oyun başlatma
 initializeGame();
